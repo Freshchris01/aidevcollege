@@ -21,13 +21,13 @@ Today will be an overview of Azure Cognitive Search, as you will learn:
 
 Thus we will cover the following topics in several sections:
 
-| Topic                                                      | Section                                                                                                                                                |
-| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Getting familiar with Cognitive Search                     | [What is Azure Cognitive Search?](#what-is-azure-cognitive-search)                                                                                     |
-| Create Azure Cognitive Search in the Portal                | [Create an Azure Cognitive Search Service in the Portal](#create-an-azure-search-service-in-the-portal)                                                |
-| Connect to Azure Cognitive Search                          | [Connect to Azure Cognitive Search](#connect-to-azure-cognitive-search)                                                                                |
-| Index structured & unstructured content with AI enrichment | [Azure Search & Cognitive Search Indexing unstructured content (e.g. images, audio, etc.)](#index-structured--unstructured-content-with-ai-enrichment) |
-| Integrate Azure Search in an Node JS Application           | [Integrate Azure Search in a Node JS Application](#integrate-azure-search-in-an-node-js-application)                                                   |
+| Topic                                                      | Section                                                                                                                                             |
+| ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Getting familiar with Cognitive Search                     | [What is Azure Cognitive Search?](#what-is-azure-cognitive-search)                                                                                  |
+| Create Azure Cognitive Search in the Portal                | [Create an Azure Cognitive Search Service in the Portal](#create-an-azure-search-service-in-the-portal)                                             |
+| Connect to Azure Cognitive Search                          | [Connect to Azure Cognitive Search](#connect-to-azure-cognitive-search)                                                                             |
+| Index structured & unstructured content with AI enrichment | [Index structured & unstructured content with AI enrichment (e.g. images, audio, etc.)](#index-structured--unstructured-content-with-ai-enrichment) |
+| Integrate Azure Search in an Node JS Application           | [Integrate Azure Cognitive Search in a Node JS Application](#integrate-azure-search-in-an-node-js-application)                                      |
 
 ## Azure Cognitive Search
 
@@ -378,93 +378,6 @@ If you are interested in querying with different `searchstrings` we have listed 
     ```python
     search_string_option5 = '&search=pool&$orderby=Address/City&$select=HotelId, HotelName, Address/City, Address/StateProvince, Tags'
     ```
-
-Now that you have created and searched an index using REST API calls, we will now do the same using the Azure Portal User Interface. Moreover, you will query unstructured data such as images using AI enrichments.
-
-## Index structured & unstructured content with AI enrichment
-
-:triangular_flag_on_post: **Goal:** Index an unstructured and structured data set with Cognitive Search
-
-1. Add another index to the Cognitive Search instance, but this time enable Cognitive Skills
-1. Index an existing data set coming from `Azure Blob Storage` (data set can be downloaded [here](https://github.com/aidevcollege/aidevcollege/raw/master/day2/CognitiveSearch/data/search-dataset-cognitive.zip))
-
-Cognitive Search can out of the box index structured data like PDFs, PowerPoints, etc., as long as the documents are easily machine readable (=text). Moreover, Azure Cognitive Search allows us to also index unstructured data such as images and audio content using AI enrichment. More precisely, it adds capabilities for data extraction, natural language processing (NLP), and image processing to the Azure Cognitive Search indexing pipeline (for more see [here](https://docs.microsoft.com/en-us/azure/search/cognitive-search-concept-intro#key-features-and-concepts)). In Azure Cognitive Search, a skillset is responsible for the pipeline of the data and consists of multiple skills. Some skills have been pre-included, but it is also possible for us to write our own skills or use third-party products.
-
-Please reuse the Azure Cognitive Search instance which you initially created.
-
-Here we'll upload our data to Blob Storage and let Cognitive Search index it from there. Hence, we need to create a new `Storage Account` and create a new `Blob container`, where we'll upload our [dataset](https://github.com/aidevcollege/aidevcollege/raw/master/day2/CognitiveSearch/data/search-dataset-cognitive.zip) to. We can do this completely through the Azure Portal (**as described below**), use [Storage Explorer](https://azure.microsoft.com/en-us/features/storage-explorer/) or use the API/CLI.
-
-**See the upload to the Storage Account below:**
-
-Let's create a **Storage Account** in the **Azure Portal**:
-
-![Create Storage](./img/CreateStorage1.png)
-
-Fill in a _unique name_ and choose the region _west europe_:
-
-![Create Storage](./img/CreateStorage2.png)
-
-Then create a Container with the **Public Access Level Private** (See Screenshot below):
-The Public Access Level specifies whether data in the container may be accessed publicly. By default, container data is private to the account owner. Use 'Blob' to allow public read access for blobs. Use 'Container' to allow public read and list access to the entire container.
-
-![Create Container](./img/CreateContainer.png)
-
-Now we can upload the **unzipped** data to the created Storage Account:
-
-> ⚠ Caution:
-> Please be aware to first **unzip** the folder and upload the **unzipped** content of the folder.
-
-![Upload Storage Account](./img/UploadStorageAccount.png)
-
-You can conveniently **select and upload all files at once**:
-
-![DataImport](./img/DataImport.png)
-
-Once we have uploaded the files, we can go into our Cognitive Search instance and go to `Import Data`:
-
-![alt text](./img/azure_search_import_data.png "Azure Search Import Data")
-
-Next, we need to define the `Data Source`:
-
-![alt text](./img/azure_search_new_datasource.png "Azure Search Existing Data Source")
-
-Next, we need to define the skillset. In our case, we'll enable all features:
-
-![alt text](./img/cognitive_search_skillset.png "Defining the skillset")
-
-We might not want to make our `content` field retrievable, as it does not necessarily provide a lot of value - however, we want to keep it `searchable`, so that Azure Search can do its job. Since we have the original files in Blob and the location stored in `metadata_storage_path`, we can always just retrieve the original file.
-
-Azure Cognitive Search automatically looks at the Blob container and will now extract the content and the metadata from all the files. Let's give our Index a better name:
-
-![alt text](./img/azure_search_create_index.png "Azure Search Index Setting")
-
-Lastly, we need to give our Indexer a name and also set the schedule. In our case, we'll only run it once, but in a real world scenario, we might want to keep it running to index new, incoming data:
-
-![alt text](./img/azure_search_indexer.png "Azure Search Indexer")
-
-Once we finished the next two tabs, Azure Cognitive Search will start indexing our data (this will take a bit longer, as it needs to run image recognition, Object Character Recognition Cognitive Services, etc. on the files). After that, our Indexer will have indexed all the files and we should be able to query them.
-
-![alt text](./img/azure_search_indexed.png "Azure Search indexed our PDFs")
-
-### Querying Content
-
-Azure Cognitive Search now indexed all our files via the `indexer` into the `index`. Ideally, we would use the REST API of Cognitive Search to perform sophisticated queries, but for training purpose this time, we can use the `Azure Search Explorer`:
-
-![alt text](./img/azure_search_explorer.png "Azure Search Explorer")
-
-[Querying data](https://docs.microsoft.com/en-us/azure/search/search-query-overview) in Azure Search can get quite sophisticated, but for our example here, we can just put in a simple query. Let's try some search queries:
-
-- `"Pin to Dashboard"` --> returns `create-search-service.png` (text was recognized via OCR): It also detects key phrases, locations, personal identifiable information etc.
-- `"Los Angeles"` --> returns `MSFT_cloud_architecture_contoso.pdf` (location was recognized via OCR in image)
-
-Using double-quotes `"..."` will search for the whole string, rather than each substring. If we want to make a search term mandatory, we need to prefix a `+`. Try out some more queries if you like.
-
-If we want to figure out the original file, we can look at: `metadata_storage_path`. Since it is **base64-encoded**, we need to decode it, either via command line or by using e.g., [www.base64decode.org](https://www.base64decode.org/).
-
-Good, so looks like our skillset worked. Please note that ideally we'd query through the API and directly specify the relevant fields, e.g., `location:Los Angeles` in the second example:
-
-- [Simple Query Syntax](https://docs.microsoft.com/en-us/rest/api/searchservice/simple-query-syntax-in-azure-search)
-- [Lucene Query Syntax](https://docs.microsoft.com/en-us/rest/api/searchservice/lucene-query-syntax-in-azure-search)
 
 As we have now seen how to use the Azure Cognitive Search service we still want to combine the ml expert view with the developer view. Thus we will show a quick example how to integrate Azure Cognitive Search in a simple Node.js application.
 

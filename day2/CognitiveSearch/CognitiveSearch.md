@@ -166,7 +166,7 @@ In this task, start a Jupyter notebook and verify that you can connect to Azure 
 }
 ```
 
-Once we have completed the next **Create an Index Task** it will look like this:
+Once we have completed the next task **Create an Index** it will look like this:
 
 ```json
 {
@@ -175,7 +175,7 @@ Once we have completed the next **Create an Index Task** it will look like this:
 }
 ```
 
-### 1 - Create an index
+### 1 - Create an Index
 
 Unless you are using the portal, an index must exist on the service before you can load data. This step uses the [Create Index REST API](https://docs.microsoft.com/rest/api/searchservice/create-index) to push an index schema to the service.
 
